@@ -1,14 +1,13 @@
-## DistribuciÛn de homicidios por escolaridad en MÈxico
+## Distribuci√≥n de homicidios por escolaridad en M√©xico
 ## Librerias
 library(tidyverse)
 library(readr)
 library(foreign)
-library(RColorBrewer)
 library(ggsci)
 
 
-## FunciÛn para filtrar homicidios, considerando:
-## AÒo, Entidad, sexo de la vÌctima, edad agrupada por grupos quinquenales y escolaridad
+## Funci√≥n para filtrar homicidios, considerando:
+## A√±o, Entidad, sexo de la v√≠ctima, edad agrupada por grupos quinquenales y escolaridad
 fhom1 <- function(df){
   as.tibble(df) %>%
     filter(LISTA_MEX == 55) %>% ## 55 es la clave para homicidio
@@ -18,8 +17,8 @@ fhom1 <- function(df){
            EDAD_AGRU,
            ESCOLARIDA)}
 ## Bases de datos crudas
-## Las bases de datos est·n muy pesadas, para cargarlas en github
-## hay que descargarlas de https://www.inegi.org.mx/programas/mortalidad/?ps=microdatos y colocar la ubicaciÛn en el apartado file =
+## Las bases de datos est√°n muy pesadas, para cargarlas en github
+## hay que descargarlas de https://www.inegi.org.mx/programas/mortalidad/?ps=microdatos y colocar la ubicaci√≥n en el apartado file =
 ## Los archivos de trabajo son lo que llevan el nombre DEFUN ##
 def19 <- read.dbf(file = )
 def18 <- read.dbf(file = )
@@ -69,8 +68,8 @@ rm(hom19,
    hom12,
    fhom1)
 
-## Convertimos los valores de la base de datos en variables categÛricas
-## Consideramos el ˙ltimo grado de escolaridad (entonces, si alguien tiene primaria incompleta lo consideramos como kinder, etc.)
+## Convertimos los valores de la base de datos en variables categ√≥ricas
+## Consideramos el √∫ltimo grado de escolaridad (entonces, si alguien tiene primaria incompleta lo consideramos como kinder, etc.)
 ESCOLARIDA1 <- c("N_ESC",
                  "PREESC",
                  "PREESC",
@@ -102,8 +101,8 @@ hom12_19tr <- merge(hom12_19,
 hom12_19tr <- merge(hom12_19tr,
                     SEXO)
 
-## DistribuciÛn de la escolaridad de las vÌctimas de homicidios en MÈxico
-## Base de datos donde contamos los homicidios y vemos la distribuciÛn porcentual
+## Distribuci√≥n de la escolaridad de las v√≠ctimas de homicidios en M√©xico
+## Base de datos donde contamos los homicidios y vemos la distribuci√≥n porcentual
 escolaridad_homicidios<- hom12_19tr %>% 
   group_by(ANIO_OCUR,
            SEXO1,
@@ -117,10 +116,10 @@ escolaridad_homicidios<- hom12_19tr %>%
 
 ##  Con esta base de datos, obtenemos los niveles educativos, de acuerdo a las etiquetas:
 ## N_ESC (Sin escolaridad)
-## BASICO (EducaciÛn B·sica: Preescolar, Primaria y Secundaria)
-## MEDIA_SUPERIOR (EducaciÛn media superior: bachillerato)
-## SUPERIOR (EducaciÛn superior: licenciatura y posgrado)
-## NO_APLICA (No aplica la categorÌa)
+## BASICO (Educaci√≥n B√°sica: Preescolar, Primaria y Secundaria)
+## MEDIA_SUPERIOR (Educaci√≥n media superior: bachillerato)
+## SUPERIOR (Educaci√≥n superior: licenciatura y posgrado)
+## NO_APLICA (No aplica la categor√≠a)
 nivel_edu <- escolaridad_homicidios%>%
   ungroup() %>%
   distinct(ESCOLARIDA1) %>%
@@ -138,9 +137,9 @@ nivel_edu <- escolaridad_homicidios%>%
 escolaridad_homicidios <- merge(escolaridad_homicidios,
                                 nivel_edu,
                                 by = "ESCOLARIDA1") %>%
-  rename(aÒo = ANIO_OCUR)
+  rename(a√±o = ANIO_OCUR)
 
-## Ordenamos factores para que asÌ aparezca en gr·ficas
+## Ordenamos factores para que as√≠ aparezca en gr√°ficas
 escolaridad_homicidios$nivel <- factor(escolaridad_homicidios$nivel,
                                        levels = c("BASICO",
                                                   "MEDIA_SUPERIOR",
@@ -149,15 +148,15 @@ escolaridad_homicidios$nivel <- factor(escolaridad_homicidios$nivel,
                                                   "INDETERMINADO",
                                                   "NO_APLICA"))
 
-## Gr·fica por la distribuciÛn de la escolaridad de vÌctima de homicidio, por aÒo
+## Gr√°fica por la distribuci√≥n de la escolaridad de v√≠ctima de homicidio, por a√±o
 ggplot(escolaridad_homicidios,
-       aes(x = aÒo,
+       aes(x = a√±o,
            y = pct,
            fill = nivel))+
   theme_bw()+
   geom_bar(stat="identity",
            position = "stack")+
-  scale_fill_simpsons(labels = c("B·sica",
+  scale_fill_simpsons(labels = c("B√°sica",
                                  "Media superior",
                                  "Superior",
                                  "Sin escolaridad", 
@@ -181,22 +180,22 @@ ggplot(escolaridad_homicidios,
                                 2017,
                                 2018,
                                 2019))+
-  labs(title="Homicidios en MÈxico, 2012 - 2019", 
-       subtitle="Porcentaje de homicidios por escolaridad de vÌctima",
-       x = "AÒo",
+  labs(title="Homicidios en M√©xico, 2012 - 2019", 
+       subtitle="Porcentaje de homicidios por escolaridad de v√≠ctima",
+       x = "A√±o",
        y = "Porcentaje",
        fill = "Nivel de Escolaridad",
        caption = "Fuente: Microdatos de Mortalidad 2012 - 2019, INEGI")
 
 
-## ComparaciÛn con distribuciÛn poblacional de educaciÛn
-## Para esta comparaciÛn, solo consideraremos las distribuciones de 2019 en defunciones y 2020 en el censo
+## Comparaci√≥n con distribuci√≥n poblacional de educaci√≥n
+## Para esta comparaci√≥n, solo consideraremos las distribuciones de 2019 en defunciones y 2020 en el censo
 ## No agrupamos por sexo para hacerlo comparable con datos del censo 2020
 escolaridad_homicidios_comparacion <- hom12_19tr %>% 
   group_by(ANIO_OCUR,
            ESCOLARIDA1) %>%
   filter(ANIO_OCUR == 2019) %>%
-  ## Filtramos de la categorÌa 8 a la 29, para tener poblaciÛn en el rango de edad 15 y m·s
+  ## Filtramos de la categor√≠a 8 a la 29, para tener poblaci√≥n en el rango de edad 15 y m√°s
   filter(EDAD_AGRU %in% c("08",
                           "09",
                           "10",
@@ -221,9 +220,9 @@ escolaridad_homicidios_comparacion <- hom12_19tr %>%
                           "29")) %>% 
   summarise(VICT = n()) %>%
   mutate(pct = VICT / sum(VICT) * 100) %>% 
-  rename(aÒo = ANIO_OCUR) %>% 
-  mutate(aÒo = as.factor(aÒo)) %>% 
-  select(aÒo, ESCOLARIDA1, pct)
+  rename(a√±o = ANIO_OCUR) %>% 
+  mutate(a√±o = as.factor(a√±o)) %>% 
+  select(a√±o, ESCOLARIDA1, pct)
 
 nivel_edu <- escolaridad_homicidios_comparacion%>%
   ungroup() %>%
@@ -242,13 +241,13 @@ escolaridad_homicidios_comparacion<- merge(escolaridad_homicidios_comparacion,
                                 nivel_edu,
                                 by = "ESCOLARIDA1") %>% 
   mutate(categoria = "victimas de homicidio") %>% 
-  select(aÒo, categoria, nivel, pct) %>%
-  group_by(aÒo, categoria, nivel) %>% 
+  select(a√±o, categoria, nivel, pct) %>%
+  group_by(a√±o, categoria, nivel) %>% 
   summarise(pct = sum(pct))
 
 
-## Escolaridad en MÈxico 2019
-escolaridad_mexico <- data.frame(aÒo = as.factor(2019),
+## Escolaridad en M√©xico 2019
+escolaridad_mexico <- data.frame(a√±o = as.factor(2019),
                                  categoria = as.factor(c("escolaridad en mexico")),
                                  nivel = as.factor(c("N_ESC",
                                                      "BASICO",
@@ -260,10 +259,10 @@ escolaridad_mexico <- data.frame(aÒo = as.factor(2019),
                                          24.0,
                                          21.6,
                                          0.2))
-## Modificamos la base de datos para introducir la distribuciÛn de los niveles educativos
+## Modificamos la base de datos para introducir la distribuci√≥n de los niveles educativos
 df_comparacion<- bind_rows(escolaridad_homicidios_comparacion,
                            escolaridad_mexico)
-## Ordenamos factores para que asÌ aparezca en gr·ficas
+## Ordenamos factores para que as√≠ aparezca en gr√°ficas
 df_comparacion$nivel <- factor(df_comparacion$nivel,
                                        levels = c("BASICO",
                                                   "MEDIA_SUPERIOR",
@@ -271,8 +270,8 @@ df_comparacion$nivel <- factor(df_comparacion$nivel,
                                                   "N_ESC",
                                                   "INDETERMINADO"))
 
-## Gr·fico de comparaciÛn entre distribuciÛn de educaciÛn de la poblaciÛn mexicana
-## y distribuciÛn de la educaciÛn de las vÌctimas de homicidio
+## Gr√°fico de comparaci√≥n entre distribuci√≥n de educaci√≥n de la poblaci√≥n mexicana
+## y distribuci√≥n de la educaci√≥n de las v√≠ctimas de homicidio
 ggplot(df_comparacion,
        aes(x = categoria,
            y = pct,
@@ -281,14 +280,14 @@ ggplot(df_comparacion,
   geom_bar(stat="identity",
            position = "stack",
            width = 0.4)+
-  scale_fill_simpsons(labels = c("B·sica",
+  scale_fill_simpsons(labels = c("B√°sica",
                                  "Media superior",
                                  "Superior",
                                  "Sin escolaridad", 
                                  "Indeterminado"))+
-  labs(title="Homicidios en MÈxico, 2019", 
-       subtitle="ComparaciÛn entre distribuciÛn de homicidios por nivel educativo, poblaciÛn 15 aÒos y m·s",
+  labs(title="Homicidios en M√©xico, 2019", 
+       subtitle="Comparaci√≥n entre distribuci√≥n de homicidios por nivel educativo, poblaci√≥n 15 a√±os y m√°s",
        x = " ",
        y = "Porcentaje",
        fill = "Nivel de Escolaridad",
-       caption = "Fuente: Microdatos de Mortalidad 2019, INEGI y CaracterÌsticas educativas de la poblaciÛn seg˙n el censo 2020, INEGI")
+       caption = "Fuente: Microdatos de Mortalidad 2019, INEGI y Caracter√≠sticas educativas de la poblaci√≥n seg√∫n el censo 2020, INEGI")
